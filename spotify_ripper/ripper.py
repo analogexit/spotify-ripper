@@ -12,7 +12,7 @@ from spotify_ripper.web import WebAPI
 from spotify_ripper.sync import Sync
 from spotify_ripper.eventloop import EventLoop
 from datetime import datetime
-from spotify_ripper.remove_all_from_playlist import get_playlist_tracks
+from spotify_ripper.remove_all_from_playlist import get_playlist
 import os
 import sys
 import time
@@ -427,10 +427,10 @@ class Ripper(threading.Thread):
             track = link.as_track()
             return iter([track])
         elif link.type == spotify.LinkType.PLAYLIST:
-            print('get playlist tracks')
+            # print('get playlist tracks')
             self.playlist_uri = uri
-            tracks = get_playlist_tracks(self.session.user.canonical_name, uri)
-            track_list = tracks.get('items')
+            playlist = get_playlist(self.session.user.canonical_name, uri)
+            track_list = playlist['tracks'].get('items')
             for n in track_list:
                 thisTrack = n.get('track')
                 thisTrackuri = thisTrack.get('uri')
@@ -438,7 +438,11 @@ class Ripper(threading.Thread):
             tracksIter = iter(uriList)
             for i in tracksIter:
                 trackList.append(self.session.get_link(i).as_track())
-            print('Loading playlist...')
+            self.current_playlist = playlist
+            if len(track_list) == 100:
+                print(Fore.YELLOW + "Warning: Spotify Web API only returns up to 100 tracks in a playlist" +
+                    Fore.RESET)
+            print 'Loading playlist with {0} tracks...'.format(len(track_list))
             return iter(trackList)
         elif link.type == spotify.LinkType.STARRED:
             link_user = link.as_user()

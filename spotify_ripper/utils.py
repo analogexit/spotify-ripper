@@ -226,9 +226,9 @@ def format_track_string(ripper, format_string, idx, track):
 
     if current_playlist is not None:
         playlist_name = to_ascii(
-            sanitize_playlist_name(current_playlist.name))
+            sanitize_playlist_name(current_playlist.get('name')))
         playlist_owner = to_ascii(
-            current_playlist.owner.display_name)
+            current_playlist.get('owner').get('id'))
     else:
         playlist_name = "No Playlist"
         playlist_owner = "No Playlist Owner"
