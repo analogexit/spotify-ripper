@@ -157,7 +157,7 @@ class PostActions(object):
         ripper = self.ripper
 
         if ripper.current_playlist is not None:
-            return ripper.current_playlist.name
+            return ripper.current_playlist.get('name')
         elif ripper.current_album is not None:
             return (ripper.current_album.artist.name + " - " + ripper.current_album.name)
         elif ripper.current_chart is not None:
@@ -283,9 +283,10 @@ class PostActions(object):
                       "Did you use '-r' without a playlist link?" + Fore.RESET)
 
     def remove_tracks_from_playlist(self):
-        ripper = self.ripper
-        remove_all_from_playlist(ripper.session.user.canonical_name, ripper.playlist_uri)
-        print("Playlist Emptied!")
+         if self.args.remove_from_playlist:
+            ripper = self.ripper
+            remove_all_from_playlist(ripper.session.user.canonical_name, ripper.playlist_uri)
+            print("Playlist Emptied!")
 
     def remove_offline_cache(self):
         ripper = self.ripper
